@@ -169,7 +169,7 @@
       margin-bottom: 20px;
     }
 
-    /* High Visibility Yellow Dropdown with Full Multi-line Text Visibility */
+    /* High Visibility Yellow Dropdown */
     .topic-select {
       width: 100%;
       min-height: 60px;
@@ -188,13 +188,11 @@
       box-shadow: 0 4px 15px rgba(250, 204, 21, 0.25);
       transition: all 0.3s ease;
       
-      /* Multi-line wrapping rules */
       white-space: normal !important;
       word-wrap: break-word;
       word-break: normal;
       overflow: visible;
 
-      /* Custom Arrow Styling */
       appearance: none;
       -webkit-appearance: none;
       -moz-appearance: none;
@@ -220,7 +218,7 @@
     }
 
     .timer-display {
-      font-size: clamp(3.2rem, 14vw, 6.5rem);
+      font-size: clamp(2.5rem, 10vw, 5.2rem);
       font-weight: 800;
       font-family: 'Courier New', Courier, monospace;
       color: #38bdf8;
@@ -230,7 +228,7 @@
       padding: clamp(10px, 2.5vw, 20px) 0;
       border-radius: 20px;
       margin: 15px 0;
-      letter-spacing: clamp(2px, 1vw, 5px);
+      letter-spacing: clamp(1px, 0.5vw, 3px);
       border: 1px solid rgba(255, 255, 255, 0.08);
       box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.9);
       transition: all 0.3s ease;
@@ -414,8 +412,8 @@
       </select>
     </div>
 
-    <!-- Big Timer Display -->
-    <div class="timer-display" id="timer-display">00:00</div>
+    <!-- Big Timer Display (MM:SS:ms) -->
+    <div class="timer-display" id="timer-display">00:00:00</div>
 
     <!-- Preset Timing Buttons -->
     <div class="time-options">
@@ -440,10 +438,12 @@
   </div>
 
   <script>
-    let timeLeft = 0;
-    let totalTime = 0;
+    let timeLeftMs = 0; // Time in milliseconds
+    let totalTimeMs = 0;
     let timerInterval = null;
     let audioCtx = null;
+    let lastSecondSound = -1; // To track second boundaries for sounds
+    let warningPlayed = false;
 
     const display = document.getElementById('timer-display');
 
@@ -563,15 +563,18 @@
 
     /* Timer Logic */
     function updateDisplay() {
-      const minutes = Math.floor(timeLeft / 60);
-      const seconds = timeLeft % 60;
+      const totalSeconds = Math.floor(timeLeftMs / 1000);
+      const minutes = Math.floor(totalSeconds / 60);
+      const seconds = totalSeconds % 60;
+      const ms = Math.floor((timeLeftMs % 1000) / 10); // Display 2-digit milliseconds (00-99)
 
       const formattedMin = String(minutes).padStart(2, '0');
       const formattedSec = String(seconds).padStart(2, '0');
+      const formattedMs = String(ms).padStart(2, '0');
 
-      display.innerText = `${formattedMin}:${formattedSec}`;
+      display.innerText = `${formattedMin}:${formattedSec}:${formattedMs}`;
 
-      if (timeLeft <= 30 && timeLeft > 0) {
+      if (totalSeconds <= 30 && timeLeftMs > 0) {
         display.classList.add('danger');
       } else {
         display.classList.remove('danger');
@@ -580,8 +583,10 @@
 
     function setTimer(seconds) {
       pauseTimer();
-      timeLeft = seconds;
-      totalTime = seconds;
+      timeLeftMs = seconds * 1000;
+      totalTimeMs = seconds * 1000;
+      warningPlayed = false;
+      lastSecondSound = -1;
       updateDisplay();
     }
 
@@ -597,28 +602,38 @@
     }
 
     function startTimer() {
-      if (timerInterval !== null || timeLeft <= 0) return;
+      if (timerInterval !== null || timeLeftMs <= 0) return;
       
       playStartBeep();
 
+      const updateInterval = 10; // Update every 10ms for smooth display
+      
       timerInterval = setInterval(() => {
-        timeLeft--;
+        timeLeftMs -= updateInterval;
+        if (timeLeftMs < 0) timeLeftMs = 0;
+
         updateDisplay();
 
-        if (timeLeft === 60 && totalTime > 60) {
+        const currentSec = Math.ceil(timeLeftMs / 1000);
+
+        // Warning sound at 60 seconds
+        if (currentSec === 60 && totalTimeMs > 60000 && !warningPlayed) {
           playWarningBeep();
+          warningPlayed = true;
         }
 
-        if (timeLeft <= 30 && timeLeft > 0) {
+        // Tick sound for last 30 seconds (plays once per second boundary)
+        if (currentSec <= 30 && currentSec > 0 && currentSec !== lastSecondSound) {
           playTickSound();
+          lastSecondSound = currentSec;
         }
 
-        if (timeLeft <= 0) {
+        if (timeLeftMs <= 0) {
           clearInterval(timerInterval);
           timerInterval = null;
           playDoubleBeepSound();
         }
-      }, 1000);
+      }, updateInterval);
     }
 
     function pauseTimer() {
@@ -628,7 +643,9 @@
 
     function resetTimer() {
       pauseTimer();
-      timeLeft = totalTime;
+      timeLeftMs = totalTimeMs;
+      warningPlayed = false;
+      lastSecondSound = -1;
       updateDisplay();
     }
   </script>
