@@ -1,653 +1,1305 @@
 <!DOCTYPE html>
+
 <html lang="si">
+
 <head>
+
   <meta charset="UTF-8">
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>ICT Day Competition Timer</title>
+
   <link rel="icon" type="image/x-icon" href="logo1.png">
+
   <style>
+
     * {
+
       box-sizing: border-box;
+
       margin: 0;
+
       padding: 0;
+
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
     }
+
+
 
     /* Dark Blue Animated Background */
+
     body {
+
       background: linear-gradient(-45deg, #010610, #020c10, #00365a, #010610, #020c1b);
+
       background-size: 400% 400%;
+
       animation: darkBlueGradientBG 30s ease infinite;
+
       color: #f8fafc;
+
       min-height: 100vh;
+
       display: flex;
+
       justify-content: center;
+
       align-items: center;
+
       padding: 15px;
+
       position: relative;
+
       overflow-x: hidden;
+
     }
+
+
 
     @keyframes darkBlueGradientBG {
+
       0% { background-position: 0% 50%; }
+
       50% { background-position: 100% 50%; }
+
       100% { background-position: 0% 50%; }
+
     }
+
+
 
     /* Fullscreen Toggle Button Style */
+
     .fullscreen-btn {
+
       position: absolute;
+
       top: 20px;
+
       right: 20px;
+
       z-index: 10;
+
       background: rgba(15, 23, 42, 0.7);
+
       border: 1px solid rgba(56, 189, 248, 0.4);
+
       color: #38bdf8;
+
       padding: 10px 16px;
+
       border-radius: 12px;
+
       cursor: pointer;
+
       font-size: 0.95rem;
+
       font-weight: 600;
+
       backdrop-filter: blur(8px);
+
       -webkit-backdrop-filter: blur(8px);
+
       transition: all 0.3s ease;
+
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+
       display: flex;
+
       align-items: center;
+
       gap: 8px;
+
     }
+
+
 
     .fullscreen-btn:hover {
+
       background: rgba(56, 189, 248, 0.2);
+
       color: #ffffff;
+
       transform: translateY(-2px);
+
       box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
+
     }
+
+
 
     /* Animated Glowing Tech Data Rays Container */
+
     .neon-lines-bg {
+
       position: absolute;
+
       top: 0;
+
       left: 0;
+
       width: 100%;
+
       height: 100%;
+
       z-index: 0;
+
       pointer-events: none;
+
       overflow: hidden;
+
     }
+
+
 
     /* Slower Moving Neon Lines */
+
     .line {
+
       position: absolute;
+
       background: linear-gradient(90deg, transparent, #0284c7, #38bdf8, transparent);
+
       box-shadow: 0 0 12px #0284c7, 0 0 24px #38bdf8;
+
       border-radius: 50px;
+
       opacity: 0.5;
+
       animation: moveLine linear infinite;
+
     }
+
+
 
     .line1 {
+
       top: 25%;
+
       left: -50%;
+
       width: 40%;
+
       height: 2px;
+
       animation-duration: 16s;
+
     }
+
+
 
     .line2 {
+
       top: 50%;
+
       left: -60%;
+
       width: 60%;
+
       height: 2px;
+
       animation-duration: 22s;
+
       animation-delay: 3s;
+
     }
+
+
 
     .line3 {
+
       top: 75%;
+
       left: -40%;
+
       width: 45%;
+
       height: 2px;
+
       animation-duration: 18s;
+
       animation-delay: 6s;
+
     }
+
+
 
     @keyframes moveLine {
+
       0% { transform: translateX(0); }
+
       100% { transform: translateX(300%); }
+
     }
+
+
 
     /* Responsive Glass Container */
+
     .container {
+
       position: relative;
+
       z-index: 1;
+
       background: rgba(15, 23, 42, 0.65);
+
       backdrop-filter: blur(20px);
+
       -webkit-backdrop-filter: blur(20px);
+
       width: 100%;
+
       max-width: 700px;
+
       padding: clamp(20px, 4vw, 35px);
+
       border-radius: clamp(16px, 3vw, 24px);
+
       border: 1px solid rgba(255, 255, 255, 0.1);
+
       box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+
       text-align: center;
+
       margin: auto;
+
     }
+
+
 
     /* Circular Logo Holder */
+
     .logo-container {
+
       margin: 0 auto 15px auto;
+
       width: clamp(80px, 15vw, 110px);
+
       height: clamp(80px, 15vw, 110px);
+
       border-radius: 50%;
+
       padding: 4px;
+
       background: rgba(2, 6, 23, 0.8);
+
       border: 2px solid rgba(56, 189, 248, 0.4);
+
       box-shadow: 0 0 20px rgba(56, 189, 248, 0.25);
+
       display: flex;
+
       justify-content: center;
+
       align-items: center;
+
     }
+
+
 
     .logo-container img {
+
       width: 100%;
+
       height: 100%;
+
       border-radius: 50%;
+
       object-fit: cover;
+
     }
+
+
 
     h1 {
+
       font-size: clamp(1.3rem, 4vw, 2rem);
+
       margin-bottom: clamp(10px, 2vw, 20px);
+
       color: #e2e8f0;
+
       text-transform: uppercase;
+
       letter-spacing: 2px;
+
       text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+
     }
+
+
 
     .topic-section {
+
       margin-bottom: 20px;
+
     }
+
+
 
     /* High Visibility Yellow Dropdown */
+
     .topic-select {
+
       width: 100%;
+
       min-height: 60px;
+
       height: auto;
+
       padding: 16px 45px 16px 20px;
+
       border-radius: 14px;
+
       background-color: #090d16;
+
       color: #facc15;
+
       border: 2px solid #facc15;
+
       font-size: clamp(1rem, 2.5vw, 1.25rem);
+
       font-weight: 700;
+
       line-height: 1.5;
+
       outline: none;
+
       cursor: pointer;
+
       text-align: center;
+
       box-shadow: 0 4px 15px rgba(250, 204, 21, 0.25);
+
       transition: all 0.3s ease;
+
       
+
       white-space: normal !important;
+
       word-wrap: break-word;
+
       word-break: normal;
+
       overflow: visible;
 
+
+
       appearance: none;
+
       -webkit-appearance: none;
+
       -moz-appearance: none;
+
       background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23facc15' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+
       background-repeat: no-repeat;
+
       background-position: right 16px center;
+
       background-size: 22px;
+
     }
+
+
 
     .topic-select:focus, .topic-select:hover {
+
       box-shadow: 0 0 22px rgba(250, 204, 21, 0.5);
+
       border-color: #fef08a;
+
     }
+
+
 
     .topic-select option {
+
       background: #0f172a;
+
       color: #fef08a;
+
       font-size: 1rem;
+
       font-weight: 600;
+
       padding: 12px;
+
       white-space: normal;
+
       word-wrap: break-word;
+
     }
+
+
 
     .timer-display {
+
       font-size: clamp(2.5rem, 10vw, 5.2rem);
+
       font-weight: 800;
+
       font-family: 'Courier New', Courier, monospace;
+
       color: #38bdf8;
+
       background: rgba(2, 6, 23, 0.7);
+
       backdrop-filter: blur(12px);
+
       -webkit-backdrop-filter: blur(12px);
+
       padding: clamp(10px, 2.5vw, 20px) 0;
+
       border-radius: 20px;
+
       margin: 15px 0;
+
       letter-spacing: clamp(1px, 0.5vw, 3px);
+
       border: 1px solid rgba(255, 255, 255, 0.08);
+
       box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.9);
+
       transition: all 0.3s ease;
+
       text-shadow: 0 0 12px rgba(56, 189, 248, 0.5);
+
     }
+
+
 
     /* Red Danger Style starting at 30 seconds */
+
     .timer-display.danger {
+
       color: #ef4444;
+
       border-color: rgba(239, 68, 68, 0.3);
+
       text-shadow: 0 0 15px rgba(239, 68, 68, 0.6);
+
       animation: pulse 1s infinite;
+
     }
+
+
 
     @keyframes pulse {
+
       0% { opacity: 1; }
+
       50% { opacity: 0.6; }
+
       100% { opacity: 1; }
+
     }
+
+
 
     /* Timing Buttons Grid Layout */
+
     .time-options {
+
       display: grid;
+
       grid-template-columns: repeat(auto-fit, minmax(75px, 1fr));
+
       gap: clamp(6px, 1.5vw, 10px);
+
       justify-content: center;
+
       margin-bottom: 15px;
+
     }
+
+
 
     .btn-time {
+
       background: rgba(255, 255, 255, 0.03);
+
       backdrop-filter: blur(8px);
+
       -webkit-backdrop-filter: blur(8px);
+
       color: #cbd5e1;
+
       border: 1px solid rgba(255, 255, 255, 0.1);
+
       padding: clamp(8px, 1.8vw, 12px) clamp(10px, 2vw, 20px);
+
       border-radius: 12px;
+
       font-size: clamp(0.85rem, 2.2vw, 1.1rem);
+
       font-weight: 600;
+
       cursor: pointer;
+
       transition: all 0.3s ease;
+
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+
       white-space: nowrap;
+
     }
+
+
 
     .btn-time:hover {
+
       background: rgba(56, 189, 248, 0.15);
+
       border-color: rgba(56, 189, 248, 0.4);
+
       color: #fff;
+
       transform: translateY(-2px);
+
     }
+
+
 
     /* Custom Time Input Area */
+
     .custom-time-section {
+
       display: flex;
+
       gap: 10px;
+
       justify-content: center;
+
       align-items: center;
+
       margin-bottom: clamp(15px, 3vw, 25px);
+
     }
+
+
 
     .custom-input {
+
       width: 90px;
+
       padding: 10px;
+
       border-radius: 10px;
+
       border: 1px solid rgba(56, 189, 248, 0.3);
+
       background: rgba(2, 6, 23, 0.7);
+
       color: #f8fafc;
+
       font-size: 1rem;
+
       text-align: center;
+
       outline: none;
+
     }
+
+
 
     .custom-input::placeholder {
+
       color: #64748b;
+
       font-size: 0.85rem;
+
     }
+
+
 
     .btn-set-custom {
+
       background: rgba(56, 189, 248, 0.2);
+
       color: #38bdf8;
+
       border: 1px solid rgba(56, 189, 248, 0.4);
+
       padding: 10px 16px;
+
       border-radius: 10px;
+
       font-weight: 600;
+
       cursor: pointer;
+
       transition: all 0.3s ease;
+
     }
+
+
 
     .btn-set-custom:hover {
+
       background: rgba(56, 189, 248, 0.4);
+
       color: #ffffff;
+
     }
+
+
 
     /* Controls Layout */
+
     .controls {
+
       display: flex;
+
       gap: clamp(8px, 2vw, 15px);
+
       justify-content: center;
+
     }
+
+
 
     .btn-control {
+
       flex: 1;
+
       padding: clamp(10px, 2vw, 15px);
+
       font-size: clamp(0.95rem, 2.5vw, 1.2rem);
+
       font-weight: bold;
+
       border-radius: 14px;
+
       cursor: pointer;
+
       transition: all 0.3s ease;
+
       backdrop-filter: blur(10px);
+
       -webkit-backdrop-filter: blur(10px);
+
       border: 1px solid rgba(255, 255, 255, 0.1);
+
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+
     }
+
+
 
     .btn-control:active {
+
       transform: scale(0.96);
+
     }
+
+
 
     .btn-start { 
+
       background: rgba(34, 197, 94, 0.15); 
+
       color: #4ade80; 
+
       border-color: rgba(34, 197, 94, 0.3);
+
     }
+
     .btn-pause { 
+
       background: rgba(234, 179, 8, 0.15); 
+
       color: #facc15; 
+
       border-color: rgba(234, 179, 8, 0.3);
+
     }
+
     .btn-reset { 
+
       background: rgba(239, 68, 68, 0.15); 
+
       color: #f87171; 
+
       border-color: rgba(239, 68, 68, 0.3);
+
     }
+
+
 
     .btn-start:hover { 
+
       background: rgba(34, 197, 94, 0.3); 
+
       color: #fff;
+
     }
+
     .btn-pause:hover { 
+
       background: rgba(234, 179, 8, 0.3); 
+
       color: #fff;
+
     }
+
     .btn-reset:hover { 
+
       background: rgba(239, 68, 68, 0.3); 
+
       color: #fff;
+
     }
+
   </style>
+
 </head>
+
 <body>
 
+
+
   <!-- Fullscreen Toggle Button -->
+
   <button class="fullscreen-btn" id="fullscreen-btn" onclick="toggleFullScreen()">
+
     <span id="fs-icon">⛶</span> <span id="fs-text">Full Screen</span>
+
   </button>
 
+
+
   <!-- Animated Glowing Data Rays -->
+
   <div class="neon-lines-bg">
+
     <div class="line line1"></div>
+
     <div class="line line2"></div>
+
     <div class="line line3"></div>
+
   </div>
+
+
 
   <div class="container">
+
     
+
     <!-- Circular Logo Section -->
+
     <div class="logo-container">
+
       <img src="logo.png" alt="ICT Logo" id="ict-logo" onerror="this.onerror=null; this.src='https://placehold.co/100x100/0284c7/ffffff?text=ICT';">
+
     </div>
+
+
 
     <h1>Digital Timer</h1>
+
     
+
     <!-- Topic Dropdown Section -->
+
     <div class="topic-section">
+
       <select name="topics" id="topics" class="topic-select">
+
         <option value="" disabled selected> SELECT THE TOPIC </option>
+
         <option value="AI මඟින් වැඩ කරගන්නා සිසුවෙක්ද, AI එක සමඟ වැඩ කරන සිසුවෙක්ද - අනාගතයට වඩාත්ම සුදුසු කවුද?">AI මඟින් වැඩ කරගන්නා සිසුවෙක්ද, AI එක සමඟ වැඩ කරන සිසුවෙක්ද - අනාගතයට වඩාත්ම සුදුසු කවුද ?</option>
+
         <option value="Social Media නිසා නූතන සිසුවා ලෝකයට සමීප වී තිබේද, නැතිනම් තමන්ටම ඈත් වී තිබේද?">Social Media නිසා නූතන සිසුවා ලෝකයට සමීප වී තිබේද, නැතිනම් තමන්ටම ඈත් වී තිබේද ?</option>
+
         <option value="Smartphone එක නූතන සිසුවාගේ අධ්‍යාපනික මෙවලමක්ද, අවධානය සොරකම් කරන උපකරණයක්ද?">Smartphone එක නූතන සිසුවාගේ අධ්‍යාපනික මෙවලමක්ද, අවධානය සොරකම් කරන උපකරණයක්ද ?</option>
+
         <option value="AI, Internet සහ Digital Technology දන්නා සිසුවාට අනාගතයේ සාම්ප්‍රදායික විෂය දැනුම පමණක් ඇති සිසුවෙකුට වඩා වැඩි වාසියක් තිබේද?">AI, Internet සහ Digital Technology දන්නා සිසුවාට අනාගතයේ සාම්ප්‍රදායික විෂය දැනුම පමණක් ඇති සිසුවෙකුට වඩා වැඩි වාසියක් තිබේද ?</option>
+
       </select>
+
     </div>
+
+
 
     <!-- Big Timer Display (MM:SS:ms) -->
+
     <div class="timer-display" id="timer-display">00:00:00</div>
 
-    <!-- Preset Timing Buttons -->
+
+
+   <!-- Preset Timing Buttons (Minutes) -->
+
     <div class="time-options">
+
+      <button class="btn-time" onclick="setTimer(180)">3 Min</button>
+
+      <button class="btn-time" onclick="setTimer(240)">4 Min</button>
+
       <button class="btn-time" onclick="setTimer(300)">5 Min</button>
-      <button class="btn-time" onclick="setTimer(600)">10 Min</button>
-      <button class="btn-time" onclick="setTimer(900)">15 Min</button>
+
     </div>
+
+
 
     <!-- Custom Time Input Area -->
+
     <div class="custom-time-section">
+
       <input type="number" id="customMin" class="custom-input" placeholder="Min" min="0">
+
       <input type="number" id="customSec" class="custom-input" placeholder="Sec" min="0" max="59">
+
       <button class="btn-set-custom" onclick="setCustomTimer()">Set Time</button>
+
     </div>
+
+
 
     <!-- Timer Control Buttons -->
+
     <div class="controls">
+
       <button class="btn-control btn-start" onclick="startTimer()">START</button>
+
       <button class="btn-control btn-pause" onclick="pauseTimer()">PAUSE</button>
+
       <button class="btn-control btn-reset" onclick="resetTimer()">RESET</button>
+
     </div>
+
   </div>
 
+
+
   <script>
+
     let timeLeftMs = 0; // Time in milliseconds
+
     let totalTimeMs = 0;
+
     let timerInterval = null;
+
     let audioCtx = null;
+
     let lastSecondSound = -1; // To track second boundaries for sounds
+
     let warningPlayed = false;
+
+
 
     const display = document.getElementById('timer-display');
 
+
+
     /* Fullscreen Functionality */
+
     function toggleFullScreen() {
+
       const fsText = document.getElementById('fs-text');
+
       if (!document.fullscreenElement) {
+
         document.documentElement.requestFullscreen().catch(err => {
+
           console.log(`Error attempting to enable full-screen mode: ${err.message}`);
+
         });
+
         fsText.innerText = 'Exit Full Screen';
+
       } else {
+
         if (document.exitFullscreen) {
+
           document.exitFullscreen();
+
         }
+
         fsText.innerText = 'Full Screen';
+
       }
+
     }
+
+
 
     document.addEventListener('fullscreenchange', () => {
+
       const fsText = document.getElementById('fs-text');
+
       if (!document.fullscreenElement) {
+
         fsText.innerText = 'Full Screen';
+
       } else {
+
         fsText.innerText = 'Exit Full Screen';
+
       }
+
     });
 
+
+
     /* Audio Functionality */
+
     function initAudio() {
+
       if (!audioCtx) {
+
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
       }
+
     }
+
+
 
     function playStartBeep() {
+
       initAudio();
+
       const oscillator = audioCtx.createOscillator();
+
       const gainNode = audioCtx.createGain();
 
+
+
       oscillator.type = 'sine';
+
       oscillator.frequency.value = 900;
 
+
+
       gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+
       gainNode.gain.linearRampToValueAtTime(0.8, audioCtx.currentTime + 0.03);
+
       gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.2);
 
+
+
       oscillator.connect(gainNode);
+
       gainNode.connect(audioCtx.destination);
 
+
+
       oscillator.start();
+
       oscillator.stop(audioCtx.currentTime + 0.2);
+
     }
+
+
 
     /* 1 Minute (60 Seconds) Warning Beep */
+
     function playWarningBeep() {
+
       initAudio();
+
       const oscillator = audioCtx.createOscillator();
+
       const gainNode = audioCtx.createGain();
 
+
+
       oscillator.type = 'sine';
+
       oscillator.frequency.value = 750;
 
+
+
       gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+
       gainNode.gain.linearRampToValueAtTime(0.8, audioCtx.currentTime + 0.05);
+
       gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.35);
 
+
+
       oscillator.connect(gainNode);
+
       gainNode.connect(audioCtx.destination);
 
+
+
       oscillator.start();
+
       oscillator.stop(audioCtx.currentTime + 0.35);
+
     }
+
+
 
     function playTickSound() {
+
       initAudio();
+
       const oscillator = audioCtx.createOscillator();
+
       const gainNode = audioCtx.createGain();
 
+
+
       oscillator.type = 'sine';
+
       oscillator.frequency.value = 600;
 
+
+
       gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+
       gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15);
 
+
+
       oscillator.connect(gainNode);
+
       gainNode.connect(audioCtx.destination);
 
+
+
       oscillator.start();
+
       oscillator.stop(audioCtx.currentTime + 0.15);
+
     }
+
+
 
     function playDoubleBeepSound() {
+
       initAudio();
 
+
+
       function triggerSingleBeep(startTime) {
+
         const oscillator = audioCtx.createOscillator();
+
         const gainNode = audioCtx.createGain();
 
+
+
         oscillator.type = 'sine';
+
         oscillator.frequency.value = 850;
 
+
+
         gainNode.gain.setValueAtTime(0, audioCtx.currentTime + startTime);
+
         gainNode.gain.linearRampToValueAtTime(0.9, audioCtx.currentTime + startTime + 0.05);
+
         gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + startTime + 0.5);
 
+
+
         oscillator.connect(gainNode);
+
         gainNode.connect(audioCtx.destination);
 
+
+
         oscillator.start(audioCtx.currentTime + startTime);
+
         oscillator.stop(audioCtx.currentTime + startTime + 0.5);
+
       }
 
+
+
       triggerSingleBeep(0);
+
       triggerSingleBeep(0.7);
+
     }
 
+
+
     /* Timer Logic */
+
     function updateDisplay() {
+
       const totalSeconds = Math.floor(timeLeftMs / 1000);
+
       const minutes = Math.floor(totalSeconds / 60);
+
       const seconds = totalSeconds % 60;
+
       const ms = Math.floor((timeLeftMs % 1000) / 10); // Display 2-digit milliseconds (00-99)
 
+
+
       const formattedMin = String(minutes).padStart(2, '0');
+
       const formattedSec = String(seconds).padStart(2, '0');
+
       const formattedMs = String(ms).padStart(2, '0');
+
+
 
       display.innerText = `${formattedMin}:${formattedSec}:${formattedMs}`;
 
+
+
       if (totalSeconds <= 30 && timeLeftMs > 0) {
+
         display.classList.add('danger');
+
       } else {
+
         display.classList.remove('danger');
+
       }
+
     }
+
+
 
     function setTimer(seconds) {
+
       pauseTimer();
+
       timeLeftMs = seconds * 1000;
+
       totalTimeMs = seconds * 1000;
+
       warningPlayed = false;
+
       lastSecondSound = -1;
+
       updateDisplay();
+
     }
 
+
+
     function setCustomTimer() {
+
       const minInput = parseInt(document.getElementById('customMin').value) || 0;
+
       const secInput = parseInt(document.getElementById('customSec').value) || 0;
+
+
 
       const totalSec = (minInput * 60) + secInput;
 
+
+
       if (totalSec > 0) {
+
         setTimer(totalSec);
+
       }
+
     }
 
+
+
     function startTimer() {
+
       if (timerInterval !== null || timeLeftMs <= 0) return;
+
       
+
       playStartBeep();
 
+
+
       const updateInterval = 10; // Update every 10ms for smooth display
+
       
+
       timerInterval = setInterval(() => {
+
         timeLeftMs -= updateInterval;
+
         if (timeLeftMs < 0) timeLeftMs = 0;
+
+
 
         updateDisplay();
 
+
+
         const currentSec = Math.ceil(timeLeftMs / 1000);
 
+
+
         // Warning sound at 60 seconds
+
         if (currentSec === 60 && totalTimeMs > 60000 && !warningPlayed) {
+
           playWarningBeep();
+
           warningPlayed = true;
+
         }
+
+
 
         // Tick sound for last 30 seconds (plays once per second boundary)
+
         if (currentSec <= 30 && currentSec > 0 && currentSec !== lastSecondSound) {
+
           playTickSound();
+
           lastSecondSound = currentSec;
+
         }
+
+
 
         if (timeLeftMs <= 0) {
+
           clearInterval(timerInterval);
+
           timerInterval = null;
+
           playDoubleBeepSound();
+
         }
+
       }, updateInterval);
+
     }
+
+
 
     function pauseTimer() {
+
       clearInterval(timerInterval);
+
       timerInterval = null;
+
     }
 
+
+
     function resetTimer() {
+
       pauseTimer();
+
       timeLeftMs = totalTimeMs;
+
       warningPlayed = false;
+
       lastSecondSound = -1;
+
       updateDisplay();
+
     }
+
   </script>
+
 </body>
+
 </html>
